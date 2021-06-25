@@ -1,4 +1,4 @@
-Introduction
+Introduction (?)
 ============
 
 This set of freely available OpenCL exercises and solutions,
