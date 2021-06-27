@@ -118,9 +118,25 @@ implementation: C, C++ and Python.
 
 # Some tips when configuring AMD Radeon Pro graphic cards
 
+<br/>
+
+## AMDGPU-Pro install with opencl
+
+When using an AMD Radeon Pro WX2100 graphic card, run
+
+```
+./amdgpu-pro-install -y --opencl=legacy
+```
+
+Note that use a suitable AMD driver.
+
+<br/>
+
 ## Verify OpenCL installation
 
 Run `clinfo`
+
+<br/>
 
 ## How to ensure that you are using amdgpu-pro
 
@@ -130,6 +146,8 @@ run `glmark2`
 
 https://wiki.archlinux.org/title/AMDGPU_PRO#How_to_ensure_you_are_using_AMDGPU-PRO_driver
 
+<br/>
+
 ## Error: /usr/bin/ld: cannot find -lOpenCL
 
 run ```sudo ln -s /usr/lib/x86_64-linux-gnu/libOpenCL.so.1 /usr/lib/libOpenCL.so```
@@ -137,11 +155,13 @@ run ```sudo ln -s /usr/lib/x86_64-linux-gnu/libOpenCL.so.1 /usr/lib/libOpenCL.so
 https://askubuntu.com/questions/1007591/usr-bin-ld-cannot-find-lopencl
 
 
-
+<br/>
 
 ## List package
 
 Run `dpkg -l` (see `dpkg --help` for a reference)
+
+<br/>
 
 ## Cannot install amdgpu drivers on Ubuntu 20.04.1 (5.4.0-56-generic)
 
@@ -177,3 +197,11 @@ sudo ./amdgpu-install -y
 ```
 
 https://community.amd.com/t5/drivers-software/can-t-install-amdgpu-drivers-on-ubuntu-20-04-1-5-4-0-56-generic/td-p/426676
+
+
+<br/>
+
+# <GL/gl.h> problem
+
+run 'apt install mesa-common-dev'
+
