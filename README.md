@@ -1,3 +1,5 @@
+<!--
+
 Introduction (?)
 ============
 
@@ -112,3 +114,66 @@ directories, there is one subdirectory per
 exercise. Within each exercise subdirectory,
 there are further subdirectories for each
 implementation: C, C++ and Python.
+-->
+
+# Some tips when configuring AMD Radeon Pro graphic cards
+
+## Verify OpenCL installation
+
+Run `clinfo`
+
+## How to ensure that you are using amdgpu-pro
+
+Run `glxinfo | grep "OpenGL vendor string" | cut -f2 -d":" | xargs`, or
+
+run `glmark2`
+
+https://wiki.archlinux.org/title/AMDGPU_PRO#How_to_ensure_you_are_using_AMDGPU-PRO_driver
+
+## Error: /usr/bin/ld: cannot find -lOpenCL
+
+run ```sudo ln -s /usr/lib/x86_64-linux-gnu/libOpenCL.so.1 /usr/lib/libOpenCL.so```
+
+https://askubuntu.com/questions/1007591/usr-bin-ld-cannot-find-lopencl
+
+
+
+
+## List package
+
+Run `dpkg -l` (see `dpkg --help` for a reference)
+
+## Cannot install amdgpu drivers on Ubuntu 20.04.1 (5.4.0-56-generic)
+
+
+To install 5.4.0-54 do next:
+
+```
+sudo apt install linux-image-5.4.0-54-generic linux-headers-5.4.0-54-generic linux-modules-extra-5.4.0-54-generic
+```
+
+then reboot to 5.4.0-54
+
+then
+
+```
+sudo apt remove linux-image-5.4.0-56-generic linux-image-unsigned-5.4.0-56-generic
+```
+
+(unsigned mentioned here because it tryed to install it for me by some reason.. it just helped)
+
+then do
+
+```
+sudo apt autoremove
+```
+
+then go to `/usr/src` and remove `linux-headers-5.4.0-56-generic` and `linux-headers-5.4.0-56` (if any of them are there)
+
+now you can do
+
+```
+sudo ./amdgpu-install -y
+```
+
+https://community.amd.com/t5/drivers-software/can-t-install-amdgpu-drivers-on-ubuntu-20-04-1-5-4-0-56-generic/td-p/426676
