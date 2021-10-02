@@ -22,6 +22,12 @@
 #include <CL/cl.h>
 #endif
 
+// OpenGL headers
+// #include <glad/gl.h>
+#include <glad_gl.c>
+#include <GL/glx.h>
+#include <GLFW/glfw3.h>
+
 #include "err_code.h"
 
 //pick up device type from compiler command line or from
@@ -40,6 +46,12 @@ extern int output_device_info(cl_device_id );
 #define TOL    (0.001)   // tolerance used in floating point comparisons
 #define LENGTH (1024)    // length of vectors a, b, and c
 
+/* Additional cl_context_properties  */
+#define CL_GL_CONTEXT_KHR                       0x2008
+#define CL_EGL_DISPLAY_KHR                      0x2009
+#define CL_GLX_DISPLAY_KHR                      0x200A
+#define CL_WGL_HDC_KHR                          0x200B
+#define CL_CGL_SHAREGROUP_KHR                   0x200C
 //------------------------------------------------------------------------------
 //
 // kernel:  vadd
@@ -69,6 +81,36 @@ const char *KernelSource = "\n" \
 
 int main(int argc, char** argv)
 {
+    // OpenGL
+    int width, height;
+
+    printf("GL initialization section\n");
+
+    GLFWwindow* window;
+
+    /* Init GLFW */
+    if( !glfwInit() )
+        exit( EXIT_FAILURE );
+
+    window = glfwCreateWindow( 400, 400, "Boing (classic Amiga demo)", NULL, NULL );
+    if (!window)
+    {
+        glfwTerminate();
+        exit( EXIT_FAILURE );
+    }
+
+    glfwSetWindowAspectRatio(window, 1, 1);
+
+    // glfwSetFramebufferSizeCallback(window, reshape);
+    // glfwSetKeyCallback(window, key_callback);
+    // glfwSetMouseButtonCallback(window, mouse_button_callback);
+    // glfwSetCursorPosCallback(window, cursor_position_callback);
+
+    glfwMakeContextCurrent(window);
+    gladLoadGL(glfwGetProcAddress);
+    glfwSwapInterval( 1 );
+
+    // 
     int          err;               // error code returned from OpenCL calls
 
     float*       h_a = (float*) calloc(LENGTH, sizeof(float));       // a vector
@@ -132,7 +174,14 @@ int main(int argc, char** argv)
     checkError(err, "Printing device output");
 
     // Create a compute context
-    context = clCreateContext(0, 1, &device_id, NULL, NULL, &err);
+    cl_context_properties props[] = {                    
+                    CL_GL_CONTEXT_KHR, (cl_context_properties)glXGetCurrentContext(), 
+                    CL_GLX_DISPLAY_KHR, (cl_context_properties)glXGetCurrentDisplay(), 
+                    CL_CONTEXT_PLATFORM, (cl_context_properties)Platform[i],
+                    0
+                    };
+
+    context = clCreateContext(props, 1, &device_id, NULL, NULL, &err);
     checkError(err, "Creating context");
 
     // Create a command queue
@@ -225,6 +274,50 @@ int main(int argc, char** argv)
     // summarise results
     printf("C = A+B:  %d out of %d results were correct.\n", correct, count);
 
+
+    //////////////////////
+    // CL-GL interop test
+    //////////////////////
+
+
+    // glfwGetFramebufferSize(window, &width, &height);
+    // reshape(window, width, height);
+
+    // create buffer object
+    GLuint vbo;
+    cl_mem vbo_cl;
+
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    
+    unsigned size = 128*1024*1024;
+    // initialize buffer object
+    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_DRAW);
+
+    // create OpenCL buffer from GL VBO
+    vbo_cl = clCreateFromGLBuffer(context, CL_MEM_WRITE_ONLY, vbo, &err);
+
+    if (err != CL_SUCCESS)
+    {
+        printf("Error: Failed in interop \n%s\n", err_code(err));
+        exit(1);
+    }    
+
+
+    for (; ;)
+    {
+        /* Swap buffers */
+       glfwSwapBuffers(window);
+       glfwPollEvents();
+
+       /* Check if we are still running */
+       if (glfwWindowShouldClose(window))
+           break;       
+    }  
+    
+    glfwTerminate();
+    exit( EXIT_SUCCESS );
+    
     // cleanup then shutdown
     clReleaseMemObject(d_a);
     clReleaseMemObject(d_b);

@@ -1,3 +1,7 @@
+MARCO = -DCL_TARGET_OPENCL_VERSION=210
+
+
+
 
 ifndef CC
 	CC = gcc
@@ -17,7 +21,8 @@ ifeq ($(PLATFORM), Darwin)
 endif
 
 DeviceInfo: DeviceInfo.c
-	$(CC) $^ $(CCFLAGS) $(LIBS) -I $(COMMON_DIR) -o $@
+	@echo $(CL_TARGET_OPENCL_VERSION)
+	$(CC) $^ $(MARCO) $(CCFLAGS)  $(LIBS) -I $(COMMON_DIR) -o $@
 
 
 clean:

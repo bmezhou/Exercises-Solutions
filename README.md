@@ -203,5 +203,28 @@ https://community.amd.com/t5/drivers-software/can-t-install-amdgpu-drivers-on-ub
 
 # <GL/gl.h> problem
 
-run 'apt install mesa-common-dev'
+run `apt install mesa-common-dev`
 
+https://packages.ubuntu.com/bionic/amd64/mesa-common-dev/filelist
+
+<br/>
+
+# OpenCL-OpenGL interoperation
+
+Refer to Nvidia SDK named oclSimpleGL
+
+Remeber to used correct OpenCL context.
+
+
+
+IIRC, use 
+
+```
+cl_context_properties props[] = 
+    {
+        CL_GL_CONTEXT_KHR, (cl_context_properties)glXGetCurrentContext(), 
+        CL_GLX_DISPLAY_KHR, (cl_context_properties)glXGetCurrentDisplay(), 
+        CL_CONTEXT_PLATFORM, (cl_context_properties)cpPlatform, 
+        0
+    };
+```

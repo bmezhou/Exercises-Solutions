@@ -128,6 +128,18 @@ int main(void)
             }
             printf(")\n");
 
+            size_t extensionSize;
+            err = clGetDeviceInfo(device[j], CL_DEVICE_EXTENSIONS, 0, NULL, &extensionSize );
+            checkError(err, "Getting device extension sizes");
+            if (extensionSize > 0)
+            {
+                printf("h\n");
+                char* extensions = (char*)malloc(extensionSize);
+                err = clGetDeviceInfo(device[j], CL_DEVICE_EXTENSIONS, extensionSize, extensions, &extensionSize);
+
+                printf("%s\n", extensions);
+            }
+
             printf("\t-------------------------\n");
         }
 
