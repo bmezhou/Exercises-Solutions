@@ -194,17 +194,18 @@ double deviceToHost(cl_context cxGPUContext, cl_device_id clSelectedDeviceID, cl
         oclCheckError(ciErrNum, CL_SUCCESS);
     }
     oclCheckError(ciErrNum, CL_SUCCESS);
-    
-    // ciErrNum = clFinish(cqCommandQueue);
+
+    // Sync queue to host,    
+    ciErrNum = clFinish(cqCommandQueue);
 
     // Overwrite host buffer.
     for (unsigned int i = 0; i < memSize; i ++)
     {
         h_data[i] = 0; //(unsigned char)(i & 0xff);
     }
-
-    // Sync queue to host, start timer 0, and copy data from GPU to Host
-    ciErrNum = clFinish(cqCommandQueue);
+    
+    // Start timer 0, and copy data from GPU to Host
+    // ciErrNum = clFinish(cqCommandQueue);
     shrDeltaT(0);
 
     if(accMode == DIRECT)

@@ -41,15 +41,34 @@ void main()
 
     glfwGetFramebufferSize(window, &width, &height);
     // reshape(window, width, height);
+    float tmpF = 0;
+    float tmpI = 0;
+
+    float inc  = 1;
+
     for (; ;)
     {
-        /* Swap buffers */
-       glfwSwapBuffers(window);
-       glfwPollEvents();
+        tmpF = tmpI / 255.0;
+        tmpI += inc;
+        
+        if (tmpI >= 255)
+        {
+            inc = -1;
+        }
+        else if (tmpI <= 0)
+        {
+            inc = 1;
+        }
 
-       /* Check if we are still running */
-       if (glfwWindowShouldClose(window))
-           break;       
+        glClearColor(tmpF, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        /* Swap buffers */
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+
+        /* Check if we are still running */
+        if (glfwWindowShouldClose(window))
+            break;       
     }  
     
     glfwTerminate();
