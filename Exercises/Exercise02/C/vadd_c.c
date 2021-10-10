@@ -288,11 +288,11 @@ int main(int argc, char** argv)
     cl_mem vbo_cl;
 
     glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, vbo);
     
     unsigned size = 128*1024*1024;
     // initialize buffer object
-    glBufferData(GL_ARRAY_BUFFER, size, 0, GL_DYNAMIC_DRAW);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, size, 0, GL_STREAM_DRAW);
 
     // create OpenCL buffer from GL VBO
     vbo_cl = clCreateFromGLBuffer(context, CL_MEM_WRITE_ONLY, vbo, &err);

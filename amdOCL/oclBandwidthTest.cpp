@@ -197,6 +197,15 @@ double deviceToHost(cl_context cxGPUContext, cl_device_id clSelectedDeviceID, cl
 
     // Sync queue to host,    
     ciErrNum = clFinish(cqCommandQueue);
+    /*
+    Blocks until all previously queued OpenCL commands in 
+    command_queue are issued to 
+    the associated device and have completed.
+    clFinish does not return until all queued commands in 
+    command_queue have been processed and completed. 
+    clFinish is also a synchronization point.
+    */
+
 
     // Overwrite host buffer.
     for (unsigned int i = 0; i < memSize; i ++)
